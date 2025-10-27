@@ -201,72 +201,77 @@ class _UserManagementPageState extends State<UserManagementPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('User Management'),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(
-                labelText: 'Search users',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+      body: Center(
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.5,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: const InputDecoration(
+                    labelText: 'Search users',
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
               ),
-            ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _filteredUsers.length,
+                  itemBuilder: (context, index) {
+                    final user = _filteredUsers[index];
+                    return ListTile(
+                      leading: CircleAvatar(
+                        child: Text(user.name[0]),
+                      ),
+                      title: Text(user.name),
+                      subtitle: Text(user.email),
+                      trailing: PopupMenuButton(
+                        itemBuilder: (context) => [
+                          const PopupMenuItem(
+                            value: 'view',
+                            child: Text('View Details'),
+                          ),
+                          const PopupMenuItem(
+                            value: 'edit',
+                            child: Text('Edit'),
+                          ),
+                          PopupMenuItem(
+                            value: 'toggle',
+                            child: Text(user.isEnabled ? 'Disable' : 'Enable'),
+                          ),
+                          const PopupMenuItem(
+                            value: 'delete',
+                            child: Text('Delete', style: TextStyle(color: Colors.red)),
+                          ),
+                        ],
+                        onSelected: (value) {
+                          switch (value) {
+                            case 'view':
+                              _viewUserDetails(user);
+                              break;
+                            case 'edit':
+                              _editUser(user);
+                              break;
+                            case 'toggle':
+                              _toggleUserStatus(user);
+                              break;
+                            case 'delete':
+                              _deleteUser(user);
+                              break;
+                          }
+                        },
+                      ),
+                      tileColor: user.isEnabled ? null : Colors.grey[300],
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _filteredUsers.length,
-              itemBuilder: (context, index) {
-                final user = _filteredUsers[index];
-                return ListTile(
-                  leading: CircleAvatar(
-                    child: Text(user.name[0]),
-                  ),
-                  title: Text(user.name),
-                  subtitle: Text(user.email),
-                  trailing: PopupMenuButton(
-                    itemBuilder: (context) => [
-                      const PopupMenuItem(
-                        value: 'view',
-                        child: Text('View Details'),
-                      ),
-                      const PopupMenuItem(
-                        value: 'edit',
-                        child: Text('Edit'),
-                      ),
-                      PopupMenuItem(
-                        value: 'toggle',
-                        child: Text(user.isEnabled ? 'Disable' : 'Enable'),
-                      ),
-                      const PopupMenuItem(
-                        value: 'delete',
-                        child: Text('Delete', style: TextStyle(color: Colors.red)),
-                      ),
-                    ],
-                    onSelected: (value) {
-                      switch (value) {
-                        case 'view':
-                          _viewUserDetails(user);
-                          break;
-                        case 'edit':
-                          _editUser(user);
-                          break;
-                        case 'toggle':
-                          _toggleUserStatus(user);
-                          break;
-                        case 'delete':
-                          _deleteUser(user);
-                          break;
-                      }
-                    },
-                  ),
-                  tileColor: user.isEnabled ? null : Colors.grey[300],
-                );
-              },
-            ),
-          ),
-        ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addUser,
