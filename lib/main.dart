@@ -40,7 +40,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'User Management',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          brightness: Brightness.dark,
+        ),
         useMaterial3: true,
       ),
       home: const UserManagementPage(),
@@ -264,7 +267,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
                           }
                         },
                       ),
-                      tileColor: user.isEnabled ? null : Colors.grey[300],
+                      tileColor: user.isEnabled ? null : Colors.grey[800],
                     );
                   },
                 ),
