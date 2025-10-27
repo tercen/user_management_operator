@@ -1,0 +1,21 @@
+{
+  "name": "User Management",
+  "description": "",
+  "isWebApp": true,
+  "isViewOnly": false,
+  "entryType": "app",
+  "tags": [
+    "workflow"
+  ],
+  "authors": [
+    "tercen"
+  ],
+  "urls": [
+    "https://github.com/tercen/user_management_app"
+  ],
+  "serve": "build/web",
+  "properties": [
+
+  ],
+  "auth": [""]
+}
