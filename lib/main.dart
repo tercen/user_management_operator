@@ -1,39 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:sci_tercen_client/sci_service_factory_web.dart';
+import 'models/user.dart';
+import 'services/user_service.dart';
+import 'services/tercen_user_service.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-class User {
-  final String id;
-  final String name;
-  final String email;
-  final bool isEnabled;
+  final userService = TercenUserService(await createServiceFactoryForWebApp());
 
-  User({
-    required this.id,
-    required this.name,
-    required this.email,
-    this.isEnabled = true,
-  });
-
-  User copyWith({
-    String? id,
-    String? name,
-    String? email,
-    bool? isEnabled,
-  }) {
-    return User(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      email: email ?? this.email,
-      isEnabled: isEnabled ?? this.isEnabled,
-    );
-  }
+  runApp(MyApp(userService: userService));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final UserService userService;
+
+  const MyApp({super.key, required this.userService});
 
   @override
   Widget build(BuildContext context) {
@@ -46,33 +28,32 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const UserManagementPage(),
+      home: UserManagementPage(userService: userService),
     );
   }
 }
 
 class UserManagementPage extends StatefulWidget {
-  const UserManagementPage({super.key});
+  final UserService userService;
+
+  const UserManagementPage({super.key, required this.userService});
 
   @override
   State<UserManagementPage> createState() => _UserManagementPageState();
 }
 
 class _UserManagementPageState extends State<UserManagementPage> {
-  final List<User> _users = [
-    User(id: '1', name: 'John Doe', email: 'john@example.com', isEnabled: true),
-    User(id: '2', name: 'Jane Smith', email: 'jane@example.com', isEnabled: true),
-    User(id: '3', name: 'Bob Johnson', email: 'bob@example.com', isEnabled: false),
-  ];
-
+  late final UserService _userService;
   final TextEditingController _searchController = TextEditingController();
   List<User> _filteredUsers = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _filteredUsers = List.from(_users);
+    _userService = widget.userService;
     _searchController.addListener(_filterUsers);
+    _loadUsers();
   }
 
   @override
@@ -81,18 +62,20 @@ class _UserManagementPageState extends State<UserManagementPage> {
     super.dispose();
   }
 
-  void _filterUsers() {
+  Future<void> _loadUsers() async {
+    setState(() => _isLoading = true);
+    final users = await _userService.getAllUsers();
     setState(() {
-      final query = _searchController.text.toLowerCase();
-      if (query.isEmpty) {
-        _filteredUsers = List.from(_users);
-      } else {
-        _filteredUsers = _users
-            .where((user) =>
-                user.name.toLowerCase().contains(query) ||
-                user.email.toLowerCase().contains(query))
-            .toList();
-      }
+      _filteredUsers = users;
+      _isLoading = false;
+    });
+  }
+
+  Future<void> _filterUsers() async {
+    final query = _searchController.text;
+    final users = await _userService.searchUsers(query);
+    setState(() {
+      _filteredUsers = users;
     });
   }
 
@@ -100,15 +83,9 @@ class _UserManagementPageState extends State<UserManagementPage> {
     showDialog(
       context: context,
       builder: (context) => _UserFormDialog(
-        onSave: (name, email) {
-          setState(() {
-            _users.add(User(
-              id: DateTime.now().millisecondsSinceEpoch.toString(),
-              name: name,
-              email: email,
-            ));
-            _filterUsers();
-          });
+        onSave: (name, email) async {
+          await _userService.addUser(name, email);
+          await _loadUsers();
         },
       ),
     );
@@ -120,14 +97,10 @@ class _UserManagementPageState extends State<UserManagementPage> {
       builder: (context) => _UserFormDialog(
         initialName: user.name,
         initialEmail: user.email,
-        onSave: (name, email) {
-          setState(() {
-            final index = _users.indexWhere((u) => u.id == user.id);
-            if (index != -1) {
-              _users[index] = user.copyWith(name: name, email: email);
-              _filterUsers();
-            }
-          });
+        onSave: (name, email) async {
+          final updatedUser = user.copyWith(name: name, email: email);
+          await _userService.updateUser(updatedUser);
+          await _loadUsers();
         },
       ),
     );
@@ -145,12 +118,10 @@ class _UserManagementPageState extends State<UserManagementPage> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
-              setState(() {
-                _users.removeWhere((u) => u.id == user.id);
-                _filterUsers();
-              });
-              Navigator.pop(context);
+            onPressed: () async {
+              await _userService.deleteUser(user.id);
+              await _loadUsers();
+              if (context.mounted) Navigator.pop(context);
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),
@@ -159,14 +130,13 @@ class _UserManagementPageState extends State<UserManagementPage> {
     );
   }
 
-  void _toggleUserStatus(User user) {
-    setState(() {
-      final index = _users.indexWhere((u) => u.id == user.id);
-      if (index != -1) {
-        _users[index] = user.copyWith(isEnabled: !user.isEnabled);
-        _filterUsers();
-      }
-    });
+  Future<void> _toggleUserStatus(User user) async {
+    if (user.isEnabled) {
+      await _userService.disableUser(user.id);
+    } else {
+      await _userService.enableUser(user.id);
+    }
+    await _loadUsers();
   }
 
   void _viewUserDetails(User user) {
@@ -221,56 +191,61 @@ class _UserManagementPageState extends State<UserManagementPage> {
                 ),
               ),
               Expanded(
-                child: ListView.builder(
-                  itemCount: _filteredUsers.length,
-                  itemBuilder: (context, index) {
-                    final user = _filteredUsers[index];
-                    return ListTile(
-                      leading: CircleAvatar(
-                        child: Text(user.name[0]),
-                      ),
-                      title: Text(user.name),
-                      subtitle: Text(user.email),
-                      trailing: PopupMenuButton(
-                        itemBuilder: (context) => [
-                          const PopupMenuItem(
-                            value: 'view',
-                            child: Text('View Details'),
-                          ),
-                          const PopupMenuItem(
-                            value: 'edit',
-                            child: Text('Edit'),
-                          ),
-                          PopupMenuItem(
-                            value: 'toggle',
-                            child: Text(user.isEnabled ? 'Disable' : 'Enable'),
-                          ),
-                          const PopupMenuItem(
-                            value: 'delete',
-                            child: Text('Delete', style: TextStyle(color: Colors.red)),
-                          ),
-                        ],
-                        onSelected: (value) {
-                          switch (value) {
-                            case 'view':
-                              _viewUserDetails(user);
-                              break;
-                            case 'edit':
-                              _editUser(user);
-                              break;
-                            case 'toggle':
-                              _toggleUserStatus(user);
-                              break;
-                            case 'delete':
-                              _deleteUser(user);
-                              break;
-                          }
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        itemCount: _filteredUsers.length,
+                        itemBuilder: (context, index) {
+                          final user = _filteredUsers[index];
+                          return ListTile(
+                            leading: CircleAvatar(child: Text(user.name[0])),
+                            title: Text(user.name),
+                            subtitle: Text(user.email),
+                            trailing: PopupMenuButton(
+                              itemBuilder: (context) => [
+                                const PopupMenuItem(
+                                  value: 'view',
+                                  child: Text('View Details'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'edit',
+                                  child: Text('Edit'),
+                                ),
+                                PopupMenuItem(
+                                  value: 'toggle',
+                                  child: Text(
+                                    user.isEnabled ? 'Disable' : 'Enable',
+                                  ),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'delete',
+                                  child: Text(
+                                    'Delete',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ],
+                              onSelected: (value) {
+                                switch (value) {
+                                  case 'view':
+                                    _viewUserDetails(user);
+                                    break;
+                                  case 'edit':
+                                    _editUser(user);
+                                    break;
+                                  case 'toggle':
+                                    _toggleUserStatus(user);
+                                    break;
+                                  case 'delete':
+                                    _deleteUser(user);
+                                    break;
+                                }
+                              },
+                            ),
+                            tileColor: user.isEnabled ? null : Colors.grey[800],
+                          );
                         },
                       ),
-                      tileColor: user.isEnabled ? null : Colors.grey[800],
-                    );
-                  },
-                ),
               ),
             ],
           ),
@@ -288,7 +263,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
 class _UserFormDialog extends StatefulWidget {
   final String? initialName;
   final String? initialEmail;
-  final Function(String name, String email) onSave;
+  final Future<void> Function(String name, String email) onSave;
 
   const _UserFormDialog({
     this.initialName,
@@ -361,10 +336,10 @@ class _UserFormDialogState extends State<_UserFormDialog> {
           child: const Text('Cancel'),
         ),
         TextButton(
-          onPressed: () {
+          onPressed: () async {
             if (_formKey.currentState!.validate()) {
-              widget.onSave(_nameController.text, _emailController.text);
-              Navigator.pop(context);
+              await widget.onSave(_nameController.text, _emailController.text);
+              if (context.mounted) Navigator.pop(context);
             }
           },
           child: const Text('Save'),
