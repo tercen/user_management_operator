@@ -35,9 +35,10 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
 
+
   sci_tercen_client:
     git:
-      ref: 1.4.1
+      ref: 1.4.4
       url: https://github.com/tercen/sci_tercen_client
       path: sci_tercen_client
 
