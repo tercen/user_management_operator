@@ -37,4 +37,6 @@ flutter run -d web-server --web-hostname=127.0.0.1 \
   --dart-define=TERCEN_TOKEN=$TERCEN_TOKEN \
   --profile
 
+
+flutter build web --wasm
 ```
