@@ -88,7 +88,6 @@ class CompiledApp {
             _4: (o, c) => o instanceof c,
       _7: f => finalizeWrapper(f, function(x0) { return dartInstance.exports._7(f,arguments.length,x0) }),
       _8: f => finalizeWrapper(f, function(x0,x1) { return dartInstance.exports._8(f,arguments.length,x0,x1) }),
-      _36: () => new Array(),
       _37: x0 => new Array(x0),
       _39: x0 => x0.length,
       _41: (x0,x1) => x0[x1],
@@ -113,7 +112,6 @@ class CompiledApp {
       _74: x0 => new Uint8Array(x0),
       _75: (x0,x1,x2) => x0.set(x1,x2),
       _76: (x0,x1) => x0.transferFromImageBitmap(x1),
-      _77: x0 => x0.arrayBuffer(),
       _78: f => finalizeWrapper(f, function(x0) { return dartInstance.exports._78(f,arguments.length,x0) }),
       _79: x0 => new window.FinalizationRegistry(x0),
       _80: (x0,x1,x2,x3) => x0.register(x1,x2,x3),
@@ -136,7 +134,6 @@ class CompiledApp {
       _125: (x0,x1) => x0.removeChild(x1),
       _203: x0 => x0.stopPropagation(),
       _204: x0 => x0.preventDefault(),
-      _205: (x0,x1,x2,x3) => x0.removeEventListener(x1,x2,x3),
       _206: (x0,x1,x2,x3) => x0.addEventListener(x1,x2,x3),
       _251: x0 => x0.unlock(),
       _252: x0 => x0.getReader(),
@@ -168,16 +165,13 @@ class CompiledApp {
       _284: (x0,x1) => x0.observe(x1),
       _285: x0 => x0.disconnect(),
       _286: (x0,x1) => x0.closest(x1),
-      _287: (x0,x1) => x0.push(x1),
       _696: () => globalThis.window.flutterConfiguration,
       _697: x0 => x0.assetBase,
       _703: x0 => x0.debugShowSemanticsNodes,
       _704: x0 => x0.hostElement,
       _705: x0 => x0.multiViewEnabled,
       _706: x0 => x0.nonce,
-      _707: x0 => x0.renderer,
       _708: x0 => x0.fontFallbackBaseUrl,
-      _710: () => globalThis.window.flutterWebRenderer,
       _712: x0 => x0.console,
       _713: x0 => x0.devicePixelRatio,
       _714: x0 => x0.document,
@@ -188,7 +182,6 @@ class CompiledApp {
       _719: x0 => x0.navigator,
       _720: x0 => x0.visualViewport,
       _721: x0 => x0.performance,
-      _723: x0 => x0.URL,
       _725: (x0,x1) => x0.getComputedStyle(x1),
       _726: x0 => x0.screen,
       _727: f => finalizeWrapper(f, function(x0) { return dartInstance.exports._727(f,arguments.length,x0) }),
@@ -265,8 +258,6 @@ class CompiledApp {
       _873: (x0,x1) => { x0.width = x1 },
       _875: (x0,x1) => { x0.height = x1 },
       _878: (x0,x1) => x0.getContext(x1),
-      _937: x0 => x0.width,
-      _938: x0 => x0.height,
       _940: (x0,x1) => x0.fetch(x1),
       _941: x0 => x0.status,
       _943: x0 => x0.body,
@@ -311,8 +302,6 @@ class CompiledApp {
       _1008: x0 => x0.search,
       _1009: x0 => x0.hash,
       _1013: x0 => x0.state,
-      _1016: (x0,x1) => x0.createObjectURL(x1),
-      _1019: (x0,x1) => new Blob(x0,x1),
       _1020: x0 => new MutationObserver(x0),
       _1021: (x0,x1,x2) => x0.observe(x1,x2),
       _1022: f => finalizeWrapper(f, function(x0,x1) { return dartInstance.exports._1022(f,arguments.length,x0,x1) }),
@@ -362,9 +351,6 @@ class CompiledApp {
       _1100: (x0,x1) => { x0.noValidate = x1 },
       _1101: (x0,x1) => { x0.method = x1 },
       _1102: (x0,x1) => { x0.action = x1 },
-      _1103: (x0,x1) => new OffscreenCanvas(x0,x1),
-      _1109: (x0,x1) => x0.getContext(x1),
-      _1111: x0 => x0.convertToBlob(),
       _1128: x0 => x0.orientation,
       _1129: x0 => x0.width,
       _1130: x0 => x0.height,
@@ -403,8 +389,6 @@ class CompiledApp {
       _1200: x0 => ({runApp: x0}),
       _1201: f => finalizeWrapper(f, function(x0,x1) { return dartInstance.exports._1201(f,arguments.length,x0,x1) }),
       _1202: x0 => x0.length,
-      _1261: () => globalThis.window.__flutterState,
-      _1262: x0 => { globalThis.window.__flutterState = x0 },
       _1284: Date.now,
       _1286: s => new Date(s * 1000).getTimezoneOffset() * 60,
       _1287: s => {
@@ -544,15 +528,15 @@ class CompiledApp {
       queueMicrotask(() => dartInstance.exports.$invokeCallback(c)),
       _1408: () => Date.now(),
       _1413: o => Object.keys(o),
-      _1414: () => new XMLHttpRequest(),
-      _1415: (x0,x1,x2) => x0.setRequestHeader(x1,x2),
-      _1416: f => finalizeWrapper(f, function(x0) { return dartInstance.exports._1416(f,arguments.length,x0) }),
-      _1417: (x0,x1,x2) => x0.addEventListener(x1,x2),
-      _1418: f => finalizeWrapper(f, function(x0) { return dartInstance.exports._1418(f,arguments.length,x0) }),
-      _1421: (x0,x1,x2,x3) => x0.open(x1,x2,x3),
-      _1422: (x0,x1) => x0.send(x1),
-      _1426: x0 => new Blob(x0),
-      _1427: x0 => x0.getAllResponseHeaders(),
+      _1419: () => new XMLHttpRequest(),
+      _1420: (x0,x1,x2) => x0.setRequestHeader(x1,x2),
+      _1421: f => finalizeWrapper(f, function(x0) { return dartInstance.exports._1421(f,arguments.length,x0) }),
+      _1422: (x0,x1,x2) => x0.addEventListener(x1,x2),
+      _1423: f => finalizeWrapper(f, function(x0) { return dartInstance.exports._1423(f,arguments.length,x0) }),
+      _1426: (x0,x1,x2,x3) => x0.open(x1,x2,x3),
+      _1427: (x0,x1) => x0.send(x1),
+      _1431: x0 => new Blob(x0),
+      _1432: x0 => x0.getAllResponseHeaders(),
       _1458: (s, m) => {
         try {
           return new RegExp(s, m);
@@ -635,6 +619,18 @@ class CompiledApp {
           setValue(wasmArray, wasmArrayOffset + i, jsArray[jsArrayOffset + i]);
         }
       },
+      _1497: (jsArray, jsArrayOffset, wasmArray, wasmArrayOffset, length) => {
+        const getValue = dartInstance.exports.$wasmI16ArrayGet;
+        for (let i = 0; i < length; i++) {
+          jsArray[jsArrayOffset + i] = getValue(wasmArray, wasmArrayOffset + i);
+        }
+      },
+      _1498: (jsArray, jsArrayOffset, wasmArray, wasmArrayOffset, length) => {
+        const setValue = dartInstance.exports.$wasmI16ArraySet;
+        for (let i = 0; i < length; i++) {
+          setValue(wasmArray, wasmArrayOffset + i, jsArray[jsArrayOffset + i]);
+        }
+      },
       _1499: (jsArray, jsArrayOffset, wasmArray, wasmArrayOffset, length) => {
         const getValue = dartInstance.exports.$wasmI32ArrayGet;
         for (let i = 0; i < length; i++) {
@@ -694,11 +690,11 @@ class CompiledApp {
       _1525: Function.prototype.call.bind(BigInt.prototype.toString),
       _1526: Function.prototype.call.bind(Number.prototype.toString),
       _1527: (d, digits) => d.toFixed(digits),
-      _1530: (d, precision) => d.toPrecision(precision),
       _1549: () => globalThis.XMLHttpRequest.DONE,
       _1555: x0 => x0.readyState,
       _1562: x0 => x0.status,
       _1564: (x0,x1) => { x0.responseType = x1 },
+      _1565: x0 => x0.responseType,
       _1566: x0 => x0.response,
 
     };

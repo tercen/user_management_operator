@@ -5,13 +5,13 @@ import 'package:user_management/main.dart';
 
 void main() {
   testWidgets('App displays user management title', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(const MyApp(userService: null,));
 
     expect(find.text('User Management'), findsOneWidget);
   });
 
   testWidgets('Search for user filters the list', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(const MyApp(userService: null,));
     await tester.pumpAndSettle();
 
     expect(find.text('John Doe'), findsOneWidget);
@@ -26,7 +26,7 @@ void main() {
   });
 
   testWidgets('Add user opens dialog', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(const MyApp(userService: null,));
 
     await tester.tap(find.byIcon(Icons.add));
     await tester.pumpAndSettle();
